@@ -1,7 +1,8 @@
 import app from "./app.js";
 
-const isDev = process.env.NODE_ENV === "production";
+const isProduction = process.env.NODE_ENV === "production";
+const port = Number(process.env.PORT ?? 3000);
 
-const { PORT = process.env.PORT } = process.env;
-app.listen(PORT, () => console.log( 
-  isDev ? `🧪 Dev server running at http://localhost:${PORT}` : `✅ Server running on port ${PORT}`));
+app.listen(port, "0.0.0.0", () => console.log(
+  isProduction ? `✅ Server running on port ${port}` : `🧪 Dev server running at http://localhost:${port}`
+));

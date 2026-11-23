@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
-import type { authType } from "../types/auth.ts";
-import { authRegister, authLogin } from "../services/authService";
+import type { authType } from "../types/auth.js";
+import { authRegister, authLogin } from "../services/authService.js";
 
 export const register = async (req: Request<{}, {}, authType>, res: Response, next: NextFunction) => {
   try {

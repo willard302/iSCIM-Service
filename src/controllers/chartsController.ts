@@ -16,6 +16,13 @@ export const getCharts = async (_req: Request, res: Response, next: NextFunction
 export const getChartImage = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { category, fileName } = req.params;
+    if (!category || !fileName) {
+      return res.status(400).json({
+        success: false,
+        error: "Chart category and file name are required"
+      });
+    }
+
     const filePath = await getDemoChart(category, fileName);
 
     if (!filePath) {

@@ -2,13 +2,6 @@ import pool from '../config/db.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-const getCosmos = () => {
-  const data = fetch("../../data/permission.json");
-  console.log(data);
-};
-
-getCosmos()
-
 export const authRegister = async (username: string, password: string) => {
   await pool.query('BEGIN');
 

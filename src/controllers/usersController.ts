@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import {usersServiceDelete, usersServiceUpdate} from "../services/usersService";
+import {usersServiceDelete, usersServiceUpdate} from "../services/usersService.js";
 
 export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
