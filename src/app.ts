@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { errorHandler } from './middlewares/error.js';
+import { requireChartsApiKey } from './middlewares/apiKey.js';
 import chartsRoutes from './routes/chartsRoutes.js';
 
 const app = express();
@@ -16,7 +17,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 // 路由
-app.use('/api/charts', chartsRoutes);
+app.use('/api/charts', requireChartsApiKey, chartsRoutes);
 
 // ⚠️ 注意：錯誤處理 middleware 要放在所有 routes 後面
 app.use(errorHandler);
