@@ -1,12 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { errorHandler } from './middlewares/error.js';
-import authRoutes from './routes/authRoutes.js';
-import usersRoutes from './routes/usersRoutes.js';
 import chartsRoutes from './routes/chartsRoutes.js';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 const app = express();
 app.use(express.json());
@@ -21,8 +16,6 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 // 路由
-app.use('/auth', authRoutes);
-app.use('/users', usersRoutes);
 app.use('/api/charts', chartsRoutes);
 
 // ⚠️ 注意：錯誤處理 middleware 要放在所有 routes 後面

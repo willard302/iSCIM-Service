@@ -1,13 +1,15 @@
 import type { Request, Response, NextFunction } from "express";
 
-export const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
-  console.error("🔥 Error in middleware:", err.message);
-    //   預設狀態碼
-  const statusCode = err.statusCode || 500;
+export const errorHandler = (err: unknown, _req: Request, res: Response, _next: NextFunction) => {
+  const error = err instanceof Error ? err : new Error("Internal Server Error");
+  const statusCode = typeof err === "object" && err !== null && "statusCode" in err
+    && typeof err.statusCode === "number"
+    ? err.statusCode
+    : 500;
 
   res.status(statusCode).json({
     success: false,
-    message: err.message || "Internal Server Error",
-    stack: process.env.NODE_ENV === "production" ? undefined : err.stack
-  })
-}
+    message: statusCode === 500 ? "Internal Server Error" : error.message,
+    stack: process.env.NODE_ENV === "production" ? undefined : error.stack
+  });
+};
