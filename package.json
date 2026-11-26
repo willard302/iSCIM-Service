@@ -7,7 +7,7 @@
     "dev": "ts-node-dev --esm --respawn src/server.ts",
     "build": "tsc",
     "start": "npm run build && node dist/server.js",
-    "test": "npm run build"
+    "test": "tsc && node --test \"dist/__tests__/*.test.js\""
   },
   "repository": {
     "type": "git",
