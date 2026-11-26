@@ -1,12 +1,17 @@
 import { timingSafeEqual } from "node:crypto";
 import type { Request, Response, NextFunction } from "express";
 
+/** 讀取用的請求公開，使用者端可直接開啟圖表 API 與圖片網址 */
+const PUBLIC_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
+
 /**
- * 只接受帶有共用金鑰的請求（模擬正式機：圖表只提供給前端專案的 server，不直接對外）。
+ * 會建立、修改、刪除資料的請求（POST／PUT／DELETE）須帶共用金鑰，只給前端專案的 server 呼叫。
  * 金鑰由環境變數 CHARTS_API_KEY 設定，請求以 X-Charts-Api-Key header 帶入。
  * 未設定 CHARTS_API_KEY 時：正式環境一律拒絕，本機開發不檢查。
  */
 export const requireChartsApiKey = (req: Request, res: Response, next: NextFunction) => {
+  if (PUBLIC_METHODS.has(req.method)) return next();
+
   const apiKey = process.env.CHARTS_API_KEY;
 
   if (!apiKey) {
