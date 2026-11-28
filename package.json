@@ -1,5 +1,5 @@
 {
-  "name": "iscim-backend",
+  "name": "iscim-service",
   "version": "1.0.0",
   "main": "server.ts",
   "type": "module",

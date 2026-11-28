@@ -1,4 +1,4 @@
-# iSCIM-Backend
+# iSCIM-Service
 
 圖表服務。`/api/charts` 的讀取請求（GET）公開，使用者端可直接開啟網址；建立、修改、刪除請求（POST／PUT／DELETE）只供前端專案（tsm-static-2.0）的 server 呼叫，須帶 `X-Charts-Api-Key`（`CHARTS_API_KEY`）。
 
