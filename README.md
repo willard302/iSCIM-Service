@@ -52,8 +52,20 @@ storage/numbers/
 └─ users/{userId}.json   # { setId, inputDigest }
 ```
 
-目前的產生器（`services/numberChartGenerator.ts`）為 demo，以 `public/charts/numbers` 的範本圖代替；正式版只需替換 `generateCard`。
+目前的產生器（`services/numberChartGenerator.ts`）為 demo，依圖卡組種類複製範本圖：`today` → `public/charts/today/numbers`、`calculation` → `public/charts/calculation/numbers`、`user` → `public/charts/demo-user-01/numbers`；正式版只需替換 `generateCard`。`cardIds` 可用的 ID 為該種類範本資料夾中的檔名（不含副檔名）。
+
+替換範本圖後，已產生的圖卡組不會自動更新（同一網址內容不變）：`today`、`calculation` 會依保留期限過期重建，`user` 為永久，需清除 `STORAGE_DIR/numbers/` 才會改用新範本。
 
 ## Demo 靜態圖
 
-`GET /api/charts`、`GET /api/charts/:category/:fileName`：`public/charts` 下的固定圖檔，所有人相同。
+`public/charts/{scope}/{category}/{fileName}` 下的固定圖檔：
+
+- `scope`：`today`（今日）、`calculation`（試算）、`demo-user-01`（demo 會員本人）
+- `category`：`numbers`、`five-elements`
+
+| 方法與路徑 | Response |
+| --- | --- |
+| `GET /api/charts` | `{ success, result: { scope, category, fileName, url }[] }` |
+| `GET /api/charts/:scope/:category/:fileName` | 圖檔；不存在時 `404` |
+
+tsm-static-2.0 的五行進階卡片以此取圖（本人 `self` 對應 `demo-user-01`）；數字進階卡片改用上方的圖卡組。

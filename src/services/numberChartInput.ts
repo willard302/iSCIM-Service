@@ -1,6 +1,6 @@
 import { createHmac } from "node:crypto";
 import { getChartKeySecret } from "../config/numberCharts.js";
-import type { Gender, NumberChartInput } from "../types/numberChart.js";
+import type { Gender, NumberChartInput, NumberChartSetKind } from "../types/numberChart.js";
 import { diffDays, getUtcToday, isIsoDate } from "../utils/date.js";
 import { HttpError } from "../utils/httpError.js";
 import { listSupportedCardIds } from "./numberChartGenerator.js";
@@ -51,12 +51,12 @@ export const parseChartInput = (payload: unknown, now = new Date()): NumberChart
 };
 
 /**
- * 要回傳的卡片；未指定時為全部。前端專案只會為已解鎖的會員要求付費卡片，
+ * 要回傳的卡片；未指定時為該種類的全部範本。前端專案只會為已解鎖的會員要求付費卡片，
  * today 與試算只要求免費卡片，因此付費圖不會被產生。
  * 接受陣列或以逗號分隔的字串（GET query）。
  */
-export const parseCardIds = async (value: unknown): Promise<string[]> => {
-  const supported = await listSupportedCardIds();
+export const parseCardIds = async (value: unknown, kind: NumberChartSetKind): Promise<string[]> => {
+  const supported = await listSupportedCardIds(kind);
   if (value === undefined) return supported;
 
   const cardIds = typeof value === "string" ? value.split(",").filter(Boolean) : value;

@@ -61,7 +61,7 @@ export const ensureSet = ({ id, kind, input, cardIds, now = new Date() }: Ensure
     const generatedIds = new Set(manifest.cards.map((card) => card.cardId));
     const missingIds = cardIds.filter((cardId) => !generatedIds.has(cardId));
     for (const cardId of missingIds) {
-      manifest.cards.push(await generateCard(manifest.input, cardId, numberChartSetModel.getSetDirectory(id)));
+      manifest.cards.push(await generateCard(manifest.kind, manifest.input, cardId, numberChartSetModel.getSetDirectory(id)));
     }
 
     const shouldTouch = now.getTime() - Date.parse(manifest.lastAccessedAt) >= numberChartRetention.touchIntervalMs;

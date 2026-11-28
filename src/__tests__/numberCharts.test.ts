@@ -1,8 +1,9 @@
 import assert from "node:assert/strict";
-import { mkdtemp, readdir, rm } from "node:fs/promises";
+import { mkdtemp, readdir, readFile, rm } from "node:fs/promises";
 import type { AddressInfo } from "node:net";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { after, before, beforeEach, describe, it } from "node:test";
 
 // 每次測試使用獨立的儲存目錄；config 於呼叫時才讀取環境變數
@@ -16,6 +17,8 @@ const { cleanupNumberCharts } = await import("../services/numberChartCleanup.js"
 const numberChartSetModel = await import("../models/numberChartSetModel.js");
 
 const DAY_MS = 24 * 60 * 60 * 1000;
+const chartsDirectory = resolve(dirname(fileURLToPath(import.meta.url)), "../../public/charts");
+const readTemplate = (scope: string, category: string, fileName: string) => readFile(join(chartsDirectory, scope, category, fileName));
 const today = new Date().toISOString().slice(0, 10);
 let baseUrl = "";
 let server: ReturnType<typeof app.listen>;
@@ -145,6 +148,35 @@ describe("number chart API", () => {
     assert.equal(await numberChartSetModel.findManifest(body.result.setId), null);
     assert.equal(await numberChartSetModel.findUserPointer("user-a"), null);
     assert.equal((await request("DELETE", "/users/user-a")).status, 204);
+  });
+});
+
+describe("demo chart templates", () => {
+  it("generates each set kind from its own template folder", async () => {
+    const todaySet = (await request("GET", `/today/${today}?cardIds=five_traits`)).body.result.setId;
+    const calcSet = (await request("POST", "/calculations", { birthDate: "1990-05-20", cardIds: ["five_traits"] })).body.result.setId;
+    const userSet = (await request("PUT", "/users/user-a", { birthDate: "1990-05-20", cardIds: ["five_traits"] })).body.result.setId;
+
+    const generated = (setId: string) => readFile(join(numberChartSetModel.getSetDirectory(setId), "five_traits.png"));
+    assert.deepEqual(await generated(todaySet), await readTemplate("today", "numbers", "five_traits.png"));
+    assert.deepEqual(await generated(calcSet), await readTemplate("calculation", "numbers", "five_traits.png"));
+    assert.deepEqual(await generated(userSet), await readTemplate("demo-user-01", "numbers", "five_traits.png"));
+    assert.notDeepEqual(await generated(todaySet), await generated(userSet));
+  });
+
+  it("serves static demo charts by scope and category", async () => {
+    const root = baseUrl.replace(/\/numbers$/, "");
+    const listed = await (await fetch(root)).json();
+    assert.ok(listed.result.some((chart: { url: string }) => chart.url === "/api/charts/today/five-elements/reci.png"));
+
+    for (const scope of ["today", "calculation", "demo-user-01"]) {
+      const image = await fetch(`${root}/${scope}/five-elements/reci.png`);
+      assert.equal(image.status, 200);
+      assert.deepEqual(Buffer.from(await image.arrayBuffer()), await readTemplate(scope, "five-elements", "reci.png"));
+    }
+    assert.equal((await fetch(`${root}/self/five-elements/reci.png`)).status, 404);
+    assert.equal((await fetch(`${root}/today/five-elements/missing.png`)).status, 404);
+    assert.equal((await fetch(`${root}/today/..%2F..%2Fsrc/app.ts`)).status, 404);
   });
 });
 

@@ -15,15 +15,15 @@ export const getCharts = async (_req: Request, res: Response, next: NextFunction
 
 export const getChartImage = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { category, fileName } = req.params;
-    if (!category || !fileName) {
+    const { scope, category, fileName } = req.params;
+    if (!scope || !category || !fileName) {
       return res.status(400).json({
         success: false,
-        error: "Chart category and file name are required"
+        error: "Chart scope, category and file name are required"
       });
     }
 
-    const filePath = await getDemoChart(category, fileName);
+    const filePath = await getDemoChart(scope, category, fileName);
 
     if (!filePath) {
       return res.status(404).json({

@@ -8,6 +8,7 @@ const router = Router();
 router.use("/numbers", numberChartsRoutes);
 
 router.get("/", getCharts);
-router.get("/:category/:fileName", getChartImage);
+// scope：today／calculation／demo-user-01；category：numbers／five-elements
+router.get("/:scope/:category/:fileName", getChartImage);
 
 export default router;

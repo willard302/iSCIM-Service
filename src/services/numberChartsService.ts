@@ -25,7 +25,7 @@ export const getTodayCharts = async (date: unknown, cardIds: unknown): Promise<N
     id: `today-${today}`,
     kind: "today",
     input: { birthDate: today },
-    cardIds: await parseCardIds(cardIds),
+    cardIds: await parseCardIds(cardIds, "today"),
   });
 };
 
@@ -35,14 +35,14 @@ export const getCalculationCharts = async (payload: unknown): Promise<NumberChar
     id: `calc-${digestInput(input)}`,
     kind: "calculation",
     input,
-    cardIds: await parseCardIds((payload as Record<string, unknown>).cardIds),
+    cardIds: await parseCardIds((payload as Record<string, unknown>).cardIds, "calculation"),
   });
 };
 
 export const upsertUserCharts = async (userIdValue: unknown, payload: unknown): Promise<NumberChartSetResult> => {
   const userId = parseUserId(userIdValue);
   const input = parseChartInput(payload);
-  const cardIds = await parseCardIds((payload as Record<string, unknown>).cardIds);
+  const cardIds = await parseCardIds((payload as Record<string, unknown>).cardIds, "user");
   const inputDigest = digestInput(input);
 
   return withSetLock(`user:${userId}`, async () => {
