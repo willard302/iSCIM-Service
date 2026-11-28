@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/willard302/iSCIM-Backend.git"
+    "url": "git+ssh://git@github.com/willard302/iSCIM-Service.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/willard302/iSCIM-Backend/issues"
+    "url": "https://github.com/willard302/iSCIM-Service/issues"
   },
-  "homepage": "https://github.com/willard302/iSCIM-Backend#readme",
+  "homepage": "https://github.com/willard302/iSCIM-Service#readme",
   "description": "",
   "devDependencies": {
     "@types/cors": "^2.8.19",
